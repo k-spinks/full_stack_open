@@ -1,4 +1,4 @@
-# Part a: Introduction to React
+# Part A: Introduction to React
 
 ## ✅ Topics Covered
 
@@ -57,5 +57,3 @@
 - Test iteratively and observe rendering behavior
 
 ---
-
-**Suggested practice**: Build a small component tree (e.g., greeting list) using functional components and props, log internal values to console to understand rendering order.
