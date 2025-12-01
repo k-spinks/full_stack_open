@@ -1,7 +1,5 @@
 # Part C: Component state, event handlers
 
-# Part 1: Component State & Event Handlers — Full Stack Open
-
 ## 🔄 Component State & Event Handlers
 
 ### Component Helper Functions & Destructuring
