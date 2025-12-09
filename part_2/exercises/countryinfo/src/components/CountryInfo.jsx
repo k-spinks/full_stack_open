@@ -10,6 +10,10 @@ const CountryInfo = ({countryInfo}) => {
         ))}
       </ul>
       <img src={countryInfo.flags.png} alt={countryInfo.flags.alt} />
+      <h2>Weather in {countryInfo.capital[0]}</h2>
+      <p>Temperature {countryInfo.weather.main.temp} F</p>
+      <img src={`https://openweathermap.org/img/wn/${countryInfo.weather.weather[0].icon}@2x.png`} alt={`${countryInfo.weather.weather[0].description} icon`} />
+      <p>Wind {countryInfo.weather.wind.speed} MPH</p>
     </div>
   )
 }

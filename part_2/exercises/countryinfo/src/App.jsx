@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import countryServices from './services/country'
 import CountryInfo from './components/CountryInfo'
 
@@ -10,8 +10,6 @@ function App() {
   const handleChange = (e) => {
     setSearchTerm(e.target.value)
   }
-
-  useEffect(() => {console.log(countryInfo)}, [countryInfo])
 
   const searchForCountries = (e) => {
     e.preventDefault()

@@ -1,22 +1,29 @@
 import axios from "axios";
 const baseUrl = 'https://studies.cs.helsinki.fi/restcountries/api/'
-// const weatherURL = 'https://api.openweathermap.org/data/2.5/weather?'
-// const weatherURL = 'http://api.openweathermap.org/geo/1.0/direct'
-const weatherURL = 'https://api.openweathermap.org/data/2.5/onecall'
+const weatherURL = 'https://api.openweathermap.org/data/2.5/weather'
 const API_KEY = import.meta.env.VITE_API_KEY
 
 const getCountry = (searchTerm) => {
   return axios.get(`${baseUrl}/name/${searchTerm}`)
-  .then(res =>{
-    const [lat, lng] = res.data.latlng
-    const weatherRes = axios.get(`${weatherURL}?lat=${lat}&lon=${lng}&exclude=minutely,hourly,daily,alerts&appid=${API_KEY}`)
-    weatherRes.then(res => console.log(res))
+    .then(res => {
+      const cityName = res.data.capital[0]
 
-    return {error: false, data: res.data, message: 'Success'}
-  }).catch(error => {
-    return {error: true, data: null, message: `Error: ${error}`}
-  })
+      return axios.get(`${weatherURL}?q=${cityName}&units=imperial&appid=${API_KEY}`)
+        .then(weatherRes => {
+          const weather = { ...weatherRes.data }
+
+          return {
+            error: false,
+            data: { ...res.data, weather },
+            message: 'Success'
+          }
+        })
+    })
+    .catch(error => {
+      return { error: true, data: null, message: `Error: ${error}` }
+    })
 }
+
 
 const getAllCountries = (searchTerm) => {
   return axios.get(`${baseUrl}/all`)
