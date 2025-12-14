@@ -26,13 +26,17 @@ let persons = [
 ]
 
 app.use(express.json())
-
-// Logger
 app.use(morgan('tiny'))
+morgan.token('post-body', (req) => {
+  return JSON.stringify(req.body)
+})
 
-// morgan.token('response-body', (req, res) => {
-//   return JSON.stringify(res.locals.responseBody)
-// })
+app.use(
+  morgan(':method :url :status :res[content-length] - :response-time ms :post-body', {
+    skip: (req) => req.method !== 'POST'
+  })
+)
+
 
 
 app.get('/', (request, response) => {
@@ -64,7 +68,7 @@ app.get('/api/persons/:id', (request, response) => {
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-  const id = request.body.id
+  const id = request.params.id
   persons = persons.filter(person => person.id !== id)
 
   response.status(204).end()
@@ -103,7 +107,7 @@ app.post('/api/persons', (request, response) => {
     number: body.number,
     id: generateId()
   }
-  
+
   persons = persons.concat(person)
   response.json(person)
 })
