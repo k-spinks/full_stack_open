@@ -30,9 +30,9 @@ app.use(express.json())
 // Logger
 app.use(morgan('tiny'))
 
-morgan.token('response-body', (req, res) => {
-  return JSON.stringify(res.locals.responseBody)
-})
+// morgan.token('response-body', (req, res) => {
+//   return JSON.stringify(res.locals.responseBody)
+// })
 
 
 app.get('/', (request, response) => {
