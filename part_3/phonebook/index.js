@@ -30,6 +30,7 @@ app.use(morgan('tiny'))
 morgan.token('post-body', (req) => {
   return JSON.stringify(req.body)
 })
+app.use(express.static('dist'))
 
 app.use(
   morgan(':method :url :status :res[content-length] - :response-time ms :post-body', {
