@@ -1,4 +1,4 @@
-const Contacts = ({filteredArray, persons, deleteContact}) => {
+const Contacts = ({filteredArray, contact, deleteContact}) => {
   return (
     <>
       {filteredArray.length > 0
@@ -7,9 +7,12 @@ const Contacts = ({filteredArray, persons, deleteContact}) => {
             <button onClick={() => deleteContact(person.id)}> Delete</button>
           </p>
         ))
-        : persons.map(person => (
+        : contact.map(person => (
           <p key={person.id}>{person.name}: {person.number}
-            <button onClick={() => deleteContact(person.id)}> Delete</button>
+            <button onClick={() => {
+              console.log(person.id)
+              deleteContact(person.id)
+              }}> Delete</button>
           </p>
         ))
       }

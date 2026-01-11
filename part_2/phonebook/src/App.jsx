@@ -6,7 +6,7 @@ import contactService from './services/contacts'
 import Notification from './components/Notification'
 
 const App = () => {
-  const [persons, setPersons] = useState([])
+  const [contact, setContacts] = useState([])
   const [filteredArray, setFilteredArray] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
@@ -14,8 +14,12 @@ const App = () => {
   const [notificationMessage, setNotificationMessage] = useState(null)
 
   useEffect(() => {
-    contactService.getAll().then(res => setPersons(res))
+    contactService.getAll().then(res => setContacts(res))
   },[])
+
+  // useEffect(() => {
+  //   console.log(contact)
+  // }, [contact])
 
   const handleNameChange = (e) => {
     setNewName(e.target.value)
@@ -35,66 +39,56 @@ const App = () => {
     return
   }
 
-  const newArr = [...persons.filter(person =>
+  const newArr = [...contact.filter(person =>
     person.name.toLowerCase().includes(searchTerm.toLowerCase())
   )]
   setFilteredArray(newArr)
 }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = e => {
     e.preventDefault()
     if(!newName || !newNumber) {
-      alert('Please enter name and number')
+      alert('Please enter a name and a number')
       return
     }
-    const newPerson = {
-      name: newName.trim(),
-      number: newNumber.trim(),
+
+    const existingContact = contact.find(person => person.name === newName)
+
+    if(existingContact) {
+      const revisedContact = {...existingContact, number: newNumber}
+      contactService
+      .updateContact(revisedContact.id, revisedContact)
+      .then(res => {
+        setContacts(prevContacts =>
+          prevContacts.map(contact =>
+            contact.id === res.id ? res : contact
+          )
+        )
+      })
+    } else {
+      const newContact = {name: newName, number: newNumber}
+      contactService.addContact(newContact).then(res => {
+        setContacts(prevContacts => [...prevContacts, res])
+      }).catch(error => {
+        setNotificationMessage(error.response.data.error)
+      })
     }
-
-    if(persons.find(person => person.name === newName.trim())) {
-      const confirmation = window.confirm(`${newName} is already added to the phonebook, replace old number with new number?`)
-
-      if(confirmation) {
-        const oldContact = persons.find(person => person.name === newName)
-        const newContact = {
-          ...oldContact, number: newNumber.trim()
-        }
-
-        contactService.updateContact(newContact.id, newContact)
-        .then(res => {
-          setPersons(persons.map(person => person.id === res.id ? {...person, number: res.number} : person))
-          setNotificationMessage(`Number has been updated for ${newContact.name}`)
-          setTimeout(() => {setNotificationMessage(null)}, 3000)
-        })
-        .catch(error => {
-        setNotificationMessage(`Information for ${newContact.name} has already been removed from the server`)
-        setTimeout(() => {setNotificationMessage(null)}, 3000)
-        })
-        setNewName('')
-        setNewNumber('')
-        return
-      }
-    }
-
-    contactService.addContact(newPerson).then(res => setPersons(persons.concat(res)))
-    setNewName('')
-    setNewNumber('')
-    setNotificationMessage(`${newPerson.name} has been added`)
-    setTimeout(() => {setNotificationMessage(null)}, 3000)
   }
 
   const deleteContact = (id) => {
-    const contact = persons.find(person => person.id === id)
-    const confirmation = window.confirm(`Delete ${contact.name}`)
+    console.log(id)
+    const foundContact = contact.find(person => person.id === id)
+    const confirmation = window.confirm(`Delete ${foundContact.name}`)
 
     if(confirmation) {
-      contactService.removeContact(id)
-      .then(res => {
-        setPersons(persons.filter(person => person.id !== res.id))
-        setNotificationMessage(`${contact.name} has been removed`)
-        setTimeout(() => {setNotificationMessage(null)}, 3000)
-      })
+      contactService.removeContact(id).then(() => {
+      setContacts(prevContacts =>
+      prevContacts.filter(person => person.id !== id)
+      )
+
+      setNotificationMessage(`${foundContact.name} has been removed`)
+      setTimeout(() => setNotificationMessage(null), 3000)
+    }).catch(error => console.log(error))
 
     } else {
       return
@@ -119,7 +113,7 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h2>Numbers</h2>
-      <Contacts filteredArray={filteredArray} persons={persons} deleteContact={deleteContact}/>
+      <Contacts filteredArray={filteredArray} contact={contact} deleteContact={deleteContact}/>
     </div>
   )
 }
