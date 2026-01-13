@@ -12,14 +12,11 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [notificationMessage, setNotificationMessage] = useState(null)
+  const [isError, setIsError] = useState(false)
 
   useEffect(() => {
     contactService.getAll().then(res => setContacts(res))
   },[])
-
-  // useEffect(() => {
-  //   console.log(contact)
-  // }, [contact])
 
   const handleNameChange = (e) => {
     setNewName(e.target.value)
@@ -45,10 +42,19 @@ const App = () => {
   setFilteredArray(newArr)
 }
 
+  const handleNotification = (message, error) => {
+    setNotificationMessage(message)
+    setIsError(error)
+    setTimeout(() => {
+        setIsError(false)
+        setNotificationMessage(null)
+      }, 5000)
+  }
+
   const handleSubmit = e => {
     e.preventDefault()
     if(!newName || !newNumber) {
-      alert('Please enter a name and a number')
+      handleNotification('Enter name and number', true)
       return
     }
 
@@ -70,7 +76,7 @@ const App = () => {
       contactService.addContact(newContact).then(res => {
         setContacts(prevContacts => [...prevContacts, res])
       }).catch(error => {
-        setNotificationMessage(error.response.data.error)
+        handleNotification(error.response.data.error, true)
       })
     }
   }
@@ -85,10 +91,10 @@ const App = () => {
       setContacts(prevContacts =>
       prevContacts.filter(person => person.id !== id)
       )
-
-      setNotificationMessage(`${foundContact.name} has been removed`)
-      setTimeout(() => setNotificationMessage(null), 3000)
-    }).catch(error => console.log(error))
+      handleNotification(`${foundContact.name} has been removed`, false)
+    }).catch(error => {
+      handleNotification(error.response.data.error, true)
+    })
 
     } else {
       return
@@ -98,7 +104,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={notificationMessage} />
+      <Notification message={notificationMessage} error={isError}/>
 
       <Filter
         handleSearchSubmit={handleSearchSubmit}

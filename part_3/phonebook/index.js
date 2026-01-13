@@ -12,6 +12,8 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
+  }else if(error.name === 'ValidationError') {
+    return response.status(400).send({ error: error.message })
   }
 
   next(error)
@@ -26,7 +28,7 @@ morgan.token('post-body', (req) => {
   return JSON.stringify(req.body)
 })
 
-// Middleware for 
+
 app.use(
   morgan(':method :url :status :res[content-length] - :response-time ms :post-body', {
     skip: (req) => req.method !== 'POST'
@@ -87,9 +89,9 @@ app.delete('/api/persons/:id', (request, response) => {
 
 // PUT route to update an existing route based on ID
 app.put('/api/persons/:id', (request, response, next) => {
-  const { name, number, id } = request.body
+  const { name, number } = request.body
   Contact.findById(request.params.id).then(contact => {
-    
+
     if(!contact) {
       response.status(404).end()
     }
@@ -100,16 +102,14 @@ app.put('/api/persons/:id', (request, response, next) => {
     contact.save().then(newContact => {
       console.log(newContact)
       response.json(newContact)
-      })
-    }).catch(error => next(error))
-
+    })
+  }).catch(error => next(error))
 })
 
 
 // POST route to add a new contact
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
   const body = request.body
-  console.log(body)
 
   if(!body.name) {
     return response.status(404).json({
@@ -129,7 +129,7 @@ app.post('/api/persons', (request, response) => {
 
   contact.save().then(savedContact => {
     response.json(savedContact)
-  })
+  }).catch(error => next(error))
 
 })
 
