@@ -1,4 +1,4 @@
-# Part B — Deploying App to the Internet
+# Part 3B — Deploying App to the Internet
 
 ## 🌍 Core Concepts
 

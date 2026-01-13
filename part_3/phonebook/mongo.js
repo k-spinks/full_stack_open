@@ -29,7 +29,7 @@ const Contact = mongoose.model('Contact', contactSchema)
 // If the cmd line arguments is exactly 3, fetch all documents from the collection
 if(process.argv.length === 3) {
   Contact.find({}).then(result => {
-    console.log("Phonebook: ")
+    console.log('Phonebook: ')
     result.forEach(contact => {
       console.log(`${contact.name} ${contact.number}`)
     })

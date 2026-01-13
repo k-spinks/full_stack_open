@@ -75,8 +75,7 @@ app.post('/api/notes', (request, response, next) => {
   // Save note to database
   note.save().then((savedNote) => {
     response.json(savedNote)
-  })
-  .catch(error => next(error))
+  }).catch(error => next(error))
 })
 
 // Update note in database
