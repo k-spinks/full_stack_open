@@ -1,16 +1,21 @@
+// Imports express router from express and Blog schema from mongoose
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 
-app.get('/api/blogs', (request, response) => {
+// GET route to find all blog posts
+blogsRouter.get('/api/blogs', (request, response) => {
   Blog.find({}).then((blogs) => {
     response.json(blogs)
   })
 })
 
-app.post('/api/blogs', (request, response) => {
+// POST route to add a new blog post
+blogsRouter.post('/api/blogs', (request, response) => {
   const blog = new Blog(request.body)
 
   blog.save().then((result) => {
     response.status(201).json(result)
   })
 })
+
+module.exports = blogsRouter
