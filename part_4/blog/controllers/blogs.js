@@ -3,7 +3,7 @@ const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 
 // GET route to find all blog posts
-blogsRouter.get('/api/blogs', (request, response) => {
+blogsRouter.get('/', (request, response) => {
   Blog.find({}).then((blogs) => {
     response.json(blogs)
   })
