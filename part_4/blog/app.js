@@ -9,6 +9,8 @@ const middleware = require('./utils/middleware')
 const app = express()
 
 // Attempts to connect to db
+console.log(`Connecting to : ${config.MONGODB_URI}`)
+
 mongoose.connect(config.MONGODB_URI, { family: 4 })
   .then(result => {
     logger.info('Connected to mongodb')
