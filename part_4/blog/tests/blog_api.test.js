@@ -60,7 +60,7 @@ describe('adding new note', () => {
       likes: 4
     }
 
-     await api.post('/api/users').send(helper.initialUser).expect(201).expect('Content-Type', /application\/json/)
+    await api.post('/api/users').send(helper.initialUser).expect(201).expect('Content-Type', /application\/json/)
 
     const response = await api.post('/api/login')
     .send({username: helper.initialUser.username, password: helper.initialUser.password})
@@ -77,16 +77,23 @@ describe('adding new note', () => {
 
   })
 
-  // TODO: Fix the rest of the tests in this section and add new test to fail if token is not given
-  test.only('defaults likes to 0 if missing', async () => {
+  test('defaults likes to 0 if missing', async () => {
     const newBlog = {
       title: "Testing blog 4",
       author: "unknown",
       url: "https://unknown"
     }
 
-    await api.post('/')
+    await api.post('/api/users').send(helper.initialUser).expect(201).expect('Content-Type', /application\/json/)
+
+    const response = await api.post('/api/login')
+    .send({username: helper.initialUser.username, password: helper.initialUser.password})
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+    await api.post('/api/blogs')
     .send(newBlog)
+    .set('Authorization', `Bearer ${response.body.token}`)
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
@@ -102,9 +109,22 @@ describe('adding new note', () => {
       likes: 400
     }
 
-    await api.post('/').send(noTitleBlog).expect(400)
+
+    await api.post('/api/users').send(helper.initialUser).expect(201).expect('Content-Type', /application\/json/)
+
+    const response = await api.post('/api/login')
+    .send({username: helper.initialUser.username, password: helper.initialUser.password})
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+    await api.post('/api/blogs')
+    .send(noTitleBlog)
+    .set('Authorization', `Bearer ${response.body.token}`)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
+
     const blogsInDb = await helper.blogsInDb()
-    assert(blogsInDb.length, helper.initialBlogs.length)
+    assert(blogsInDb.length === 0)
 
   })
 
@@ -115,11 +135,47 @@ describe('adding new note', () => {
       likes: 400
     }
 
-    await api.post('/').send(noUrlBlog).expect(400)
+    await api.post('/api/users').send(helper.initialUser).expect(201).expect('Content-Type', /application\/json/)
+
+    const response = await api.post('/api/login')
+    .send({username: helper.initialUser.username, password: helper.initialUser.password})
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+    await api.post('/api/blogs')
+    .send(noUrlBlog)
+    .set('Authorization', `Bearer ${response.body.token}`)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
 
     const blogsInDb = await helper.blogsInDb()
-    assert(blogsInDb.length, helper.initialBlogs.length)
+    assert(blogsInDb.length === 0)
 
+  })
+
+  test.only('no token returns 401', async () => {
+
+    const newBlog = {
+      title: "Testing blog",
+      author: "Testing user",
+      url: "https://unknown",
+      likes: 4
+    }
+
+    await api.post('/api/users').send(helper.initialUser).expect(201).expect('Content-Type', /application\/json/)
+
+    const response = await api.post('/api/login')
+    .send({username: helper.initialUser.username, password: helper.initialUser.password})
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+    await api.post('/api/blogs')
+    .send(newBlog)
+    .expect(401)
+    .expect('Content-Type', /application\/json/)
+
+    const blogsInDb = await helper.blogsInDb()
+    assert(blogsInDb.length === 0)
   })
 
 })

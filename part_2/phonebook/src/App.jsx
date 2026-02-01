@@ -14,6 +14,7 @@ const App = () => {
   const [notificationMessage, setNotificationMessage] = useState(null)
   const [isError, setIsError] = useState(false)
 
+
   useEffect(() => {
     contactService.getAll().then(res => setContacts(res))
   },[])

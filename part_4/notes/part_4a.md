@@ -1,4 +1,4 @@
-# Part 4A — Structure of Backend Applications & Introduction to Testing — Essential Notes
+# Part 4A — Structure of Backend Applications & Introduction to Testing
 
 ## 📌 Core Concepts
 
@@ -16,7 +16,6 @@
   ```
 
 - Responsibilities:
-
   - **controllers/**: Route handlers and request logic
   - **models/**: Database schemas and data access logic
   - **utils/**: Helpers (config, logger, middleware)
@@ -52,7 +51,6 @@ Mental model:
 #### Middleware
 
 - Encapsulates reusable request/response logic:
-
   - Request logging
   - Unknown endpoint handling
   - Centralized error handling
@@ -65,7 +63,6 @@ Mental model:
 
 - Middleware functions run **in order of registration**.
 - Each middleware can:
-
   - Modify request/response
   - End the request
   - Pass control to the next middleware
@@ -103,7 +100,6 @@ Order matters.
 
 - Test multiple components together.
 - Common for backend APIs:
-
   - HTTP request → Express → Database → Response
 
 Integration tests provide higher confidence for APIs.
@@ -115,7 +111,6 @@ Integration tests provide higher confidence for APIs.
 - Tests must not affect development or production data.
 - Use a **separate test database**.
 - Use environment variables:
-
   - `NODE_ENV=test`
 
 Isolation ensures predictable and repeatable tests.
@@ -127,7 +122,6 @@ Isolation ensures predictable and repeatable tests.
 - **Supertest** allows testing Express apps without starting a server.
 - Simulates real HTTP requests.
 - Enables assertions on:
-
   - Status codes
   - Response headers
   - Response body
@@ -139,7 +133,6 @@ API tests closely resemble real client usage.
 ### 9. Test Lifecycle Hooks
 
 - Hooks like `beforeEach`, `afterAll`:
-
   - Reset database state
   - Prepare known test data
   - Close database connections
