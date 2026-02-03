@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react'
 
 const BlogForm = ({ createBlog }) => {
 
@@ -58,14 +58,14 @@ const BlogForm = ({ createBlog }) => {
             id="blog-url"
             value={url}
             name="url"
-           onChange={(event) => setUrl(event.target.value)}
+            onChange={(event) => setUrl(event.target.value)}
           />
         </label>
       </div>
 
       <button type="submit">create</button>
     </form>
-  );
-};
+  )
+}
 
-export default BlogForm;
+export default BlogForm

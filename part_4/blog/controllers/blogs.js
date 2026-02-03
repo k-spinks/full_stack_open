@@ -52,6 +52,7 @@ blogsRouter.post("/", userExtractor, async (request, response) => {
 
 // DELETE route for removing a blog post
 blogsRouter.delete("/:id", userExtractor, async (request, response) => {
+  console.log(request)
   const authorizedUser = request.user;
 
   const id = request.params.id;
@@ -69,34 +70,16 @@ blogsRouter.delete("/:id", userExtractor, async (request, response) => {
 });
 
 // PUT route for updating a blog post
-blogsRouter.put("/:id", async (request, response) => {
-  const { title, author, url, likes } = request.body;
-  const id = request.params.id;
-  const foundBlog = await Blog.findById(id);
+blogsRouter.put("/:id", userExtractor, async (request, response) => {
+  const { title, author, url, likes, user } = request.body;
 
-  foundBlog.title = title || foundBlog.title;
-  foundBlog.author = author || foundBlog.author;
-  foundBlog.url = url || foundBlog.url;
-  foundBlog.likes = likes || foundBlog.likes;
+  const updatedBlog = await Blog.findByIdAndUpdate(
+    request.params.id,
+    { title, author, url, likes, user },
+    { new: true, runValidators: true }
+  );
 
-  const updatedBlog = await foundBlog.save();
   response.status(200).json(updatedBlog);
 });
-
-// PUT route for updating like count
-blogsRouter.put('/:id/like', async (request, response) => {
-  const id = request.params.id
-
-  const blog = await Blog.findById(id)
-  if (!blog) {
-    return response.status(404).json({ error: 'Blog not found' })
-  }
-
-  blog.likes += 1
-
-  const savedBlog = await blog.save()
-  response.status(200).json(savedBlog)
-})
-
 
 module.exports = blogsRouter;

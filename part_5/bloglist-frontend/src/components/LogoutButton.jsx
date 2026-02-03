@@ -1,8 +1,8 @@
 const LogoutButton = ({ handleLogout }) => {
   return (
-  <button onClick={handleLogout} >
-    Logout
-  </button>
+    <button onClick={handleLogout} >
+      Logout
+    </button>
   )
 }
 
